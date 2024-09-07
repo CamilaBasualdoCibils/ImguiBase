@@ -1,14 +1,14 @@
 local PROJECT_NAME = "ImguiBase"
 
 -- premake5.lua
-workspace (PROJECT_NAME)
+workspace "MyWorkspace"
     configurations { "Debug", "Release" }
     platforms { "x64" }
     architecture "x86_64"
     startproject (PROJECT_NAME)
 
 project (PROJECT_NAME)
-   kind "ConsoleApp"
+   kind "StaticLib"
    language "C++"
    targetdir "bin/%{cfg.buildcfg}"
    flags{"MultiProcessorCompile"}
