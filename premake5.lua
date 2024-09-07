@@ -58,8 +58,20 @@ function setup()
     --GLFW
     os.execute("git clone https://github.com/glfw/glfw lib/glfw") --git clone
     os.execute("cd lib/glfw && cmake -S . -B build -D  GLFW_BUILD_EXAMPLES=OFF -D GLFW_BUILD_TESTS=OFF && cd build && make ")--move to the folder,create makefiles and make
-    os.execute("cd lib/glfw && mkdir lib && mv build/src/libglfw3.a lib/libglfw3.a")--move the final lib file to lib/glfw/lib
-    os.execute("cd lib/glfw && rm -r .github build CMake deps docs examples tests src")--delete everything not needed
+    os.mkdir("lib/glfw/lib")
+    os.copyfile("lib/glfw/build/src/libglfw3.a","lib/glfw/lib")
+    os.chdir("lib/glfw")
+    os.rmdir(".github")
+    os.rmdir("build")
+    os.rmdir("CMake")
+    os.rmdir("deps")
+    os.rmdir("docs")
+    os.rmdir("examples")
+    os.rmdir("tests")
+    os.rmdir("src")
+    RemoveAllFilesThatMatch("*")
+    os.chdir("../../")
+
 
 
     --IMGUI
@@ -76,7 +88,8 @@ function setup()
     --os.execute(glewGetCmd)
     zip.extract("glew.zip","lib")
     --os.execute("unzip glew.zip -d lib")--unzip zip file
-    os.execute(string.format("mv lib/%s lib/glew",glewFileName))--rename from GLFW_X.X.X to glfw
+    os.copyfile(string.format("mv lib/%s ",glewFileName),"lib/glew")
+    os.execute(string.format("mv lib/%s lib/glew",glewFileName))--rename from GLFW_X.X.X to glfw TODO: FIND EQUIVALENT OS. OR SOMETHING
     os.execute("cd lib/glew && make glew.lib.static")--make static libraries
     os.execute("cd lib/glew && rm -f -r auto bin build config doc src tmp")--remove anything not needed
     os.execute("rm -f glew.zip")--delete original zip file
@@ -116,7 +129,14 @@ function customClean()
         end
     end
 end
+function RemoveAllFilesThatMatch(extension)
 
+    local files = os.matchfiles(string.format("*.%s",extension))
+    for _, file in ipairs(files) do
+        print(string.format("Deleting %s",file))
+        os.remove(file)
+    end
+end
 -- Add the custom clean function to the clean action
 newaction {
     trigger = "clean",
