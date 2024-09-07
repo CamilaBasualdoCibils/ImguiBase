@@ -1,3 +1,6 @@
 *.make
 Makefile
 lib/
+bin/
+obj/
+imgui.ini

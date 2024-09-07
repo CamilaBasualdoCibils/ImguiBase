@@ -12,7 +12,7 @@ project (PROJECT_NAME)
 
    files {"src/*.cpp" }
    --files { }
-   includedirs {"lib/imgui-docking","lib/glfw/include"}
+   includedirs {"lib/imgui-docking","lib/glfw/include","lib/glew/include","lib/implot"}
    libdirs{"lib/glfw/lib","lib/glew/lib"}
     links{"ImGui","ImPlot","GLEW","glfw3","X11","GL"}
    filter "configurations:Debug"
@@ -28,7 +28,9 @@ project "ImGui"
    targetdir "bin/%{cfg.buildcfg}"
    flags{"MultiProcessorCompile"}
 
-   files { "lib/imgui-docking/*.h","lib/imgui-docking/*.cpp"  }
+   files { "lib/imgui-docking/*.h","lib/imgui-docking/*.cpp",
+    "lib/imgui-docking/backends/imgui_impl_opengl3.cpp",
+    "lib/imgui-docking/backends/imgui_impl_glfw.cpp"  }
    includedirs {"lib/imgui-docking"}
 
    filter "configurations:Debug"
@@ -93,7 +95,9 @@ function setup()
     os.execute("cd lib/glew && make glew.lib.static")--make static libraries
     os.execute("cd lib/glew && rm -f -r auto bin build config doc src tmp")--remove anything not needed
     os.execute("rm -f glew.zip")--delete original zip file
-
+    os.chdir("lib/glew")
+    RemoveAllFilesThatMatch("*")
+    os.chdir("../../")
   
    --[[
     FOR WINDOWS/MAC SUPPORT USES os.target() WHICH TELLS WHICH OS THIS IS

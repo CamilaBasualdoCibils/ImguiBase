@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${default}",
+                "${workspaceFolder}/lib/imgui-docking",
+                "${workspaceFolder}/lib/implot",
+                "${workspaceFolder}/lib/glfw/include",
+                "${workspaceFolder}/lib/glew/include"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
