@@ -4,12 +4,12 @@ A bare bones DearImgui/ImPlot implementation using GLFW + GLEW for use. Intended
 --- 
 # Usage
 ```
-/create project files, examples: vs2022, gmake2
-//see all available targets at https://premake.github.io/docs/Using-Premake/
+/create project files, examples: 
+// vs2022 for visual studio 2022
+// gmake2 for makefiles
 //use ./premake.exe on windows
 
 ./premake5 [target] 
-
 
 //Download, setup and compile all required libraries aka GLFW,ImGui etc
 ./premake5 setup 
