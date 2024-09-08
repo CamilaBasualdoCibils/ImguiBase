@@ -4,3 +4,6 @@ lib/
 bin/
 obj/
 imgui.ini
+*.vcxproj
+*.sln
+*.filters
