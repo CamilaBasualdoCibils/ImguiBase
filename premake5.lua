@@ -1,14 +1,14 @@
 local PROJECT_NAME = "ImguiBase"
 
 -- premake5.lua
-workspace (PROJECT_NAME)
+workspace "MyWorkspace"
     configurations { "Debug", "Release" }
     platforms { "x64" }
     architecture "x86_64"
     startproject (PROJECT_NAME)
 
 project (PROJECT_NAME)
-   kind "ConsoleApp"
+   kind "StaticLib"
    language "C++"
    targetdir "bin/%{cfg.buildcfg}"
    flags{"MultiProcessorCompile"}
@@ -36,9 +36,9 @@ project "ImGui"
    targetdir "bin/%{cfg.buildcfg}"
    flags{"MultiProcessorCompile"}
 
-   files { "lib/imgui-docking/*.h","lib/imgui-docking/*.cpp",}
-   ---- "lib/imgui-docking/backends/imgui_impl_opengl3.cpp",
-   --"lib/imgui-docking/backends/imgui_impl_glfw.cpp"  }
+   files { "lib/imgui-docking/*.h","lib/imgui-docking/*.cpp",
+    "lib/imgui-docking/backends/imgui_impl_opengl3.cpp",
+   "lib/imgui-docking/backends/imgui_impl_glfw.cpp"  }
    includedirs {"lib/imgui-docking","lib/glfw/include"}
 
    filter "configurations:Debug"
