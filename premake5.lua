@@ -36,9 +36,9 @@ project "ImGui"
    targetdir "bin/%{cfg.buildcfg}"
    flags{"MultiProcessorCompile"}
 
-   files { "lib/imgui-docking/*.h","lib/imgui-docking/*.cpp",}
-   ---- "lib/imgui-docking/backends/imgui_impl_opengl3.cpp",
-   --"lib/imgui-docking/backends/imgui_impl_glfw.cpp"  }
+   files { "lib/imgui-docking/*.h","lib/imgui-docking/*.cpp",
+    "lib/imgui-docking/backends/imgui_impl_opengl3.cpp",
+   "lib/imgui-docking/backends/imgui_impl_glfw.cpp"  }
    includedirs {"lib/imgui-docking","lib/glfw/include"}
 
    filter "configurations:Debug"
