@@ -38,6 +38,7 @@ void App::Run()
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable & properties.imgui_docking_enable;     // Enable Docking
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable  & properties.imgui_viewports_enable;   // Enable Multi-Viewport / Platform Windows
 
+     OnStart();
     while (!shouldShutdown && !glfwWindowShouldClose(window)) {
         glfwPollEvents();
         //new imgui frame
@@ -65,7 +66,7 @@ void App::Run()
         }
         glfwSwapBuffers(window);
     }
-
+OnShutdown();
     CleanUp();
 }
 
