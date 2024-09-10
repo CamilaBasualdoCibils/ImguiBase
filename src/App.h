@@ -39,9 +39,9 @@ public:
     void Shutdown();
 
 private:
+    virtual void OnStart() = 0;
     virtual void OnUpdate() = 0;
     virtual void OnRender() = 0;
-    virtual void OnStart() = 0;
     virtual void OnShutdown()= 0;
     void CleanUp();
     static void glfw_error_callback(int error, const char *description);
