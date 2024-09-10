@@ -1,5 +1,5 @@
 # Description
-A bare bones DearImgui/ImPlot implementation using GLFW + GLEW for use. Intended to be cross platform with fallbacks for different openGL versions.
+A bare bones DearImgui/ImPlot implementation using GLFW + GLEW. Intended to be cross platform with fallbacks for different openGL versions.
 
 --- 
 # Usage
