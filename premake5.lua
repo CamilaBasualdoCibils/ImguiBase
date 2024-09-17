@@ -5,17 +5,18 @@ workspace "MyWorkspace"
     configurations { "Debug", "Release" }
     platforms { "x64" }
     architecture "x86_64"
-    startproject (PROJECT_NAME)
+    
 
 project (PROJECT_NAME)
    kind "StaticLib"
    language "C++"
+   cppdialect "c++17"
    targetdir "bin/%{cfg.buildcfg}"
    flags{"MultiProcessorCompile"}
 
-   files {"src/*.cpp","lib/imgui-docking/backends/imgui_impl_glfw.cpp","lib/imgui-docking/backends/imgui_impl_opengl3.cpp" }
+   files {"src/**.cpp","lib/imgui-docking/backends/imgui_impl_glfw.cpp","lib/imgui-docking/backends/imgui_impl_opengl3.cpp" }
    --files { }
-   includedirs {"lib/imgui-docking","lib/glfw/include","lib/glew/include","lib/implot"}
+   includedirs {"lib/imgui-docking","lib/glfw/include","lib/glew/include","lib/implot","lib/glm"}
    libdirs{"lib/glfw/lib","lib/glew/lib"}
     links{"ImGui","ImPlot","glfw3","glew32s"}
 
@@ -33,13 +34,14 @@ project (PROJECT_NAME)
 project "ImGui"
    kind "StaticLib"
    language "C++"
+   cppdialect "c++17"
    targetdir "bin/%{cfg.buildcfg}"
    flags{"MultiProcessorCompile"}
 
    files { "lib/imgui-docking/*.h","lib/imgui-docking/*.cpp",
     "lib/imgui-docking/backends/imgui_impl_opengl3.cpp",
    "lib/imgui-docking/backends/imgui_impl_glfw.cpp"  }
-   includedirs {"lib/imgui-docking","lib/glfw/include"}
+   includedirs {"lib/imgui-docking","lib/glfw/include","lib/glew/include"}
 
    filter "configurations:Debug"
       defines { "_DEBUG" }
@@ -50,6 +52,7 @@ project "ImGui"
 project "ImPlot"
     kind "StaticLib"
     language "C++"
+    cppdialect "c++17"
     targetdir "bin/%{cfg.buildcfg}"
     flags{"MultiProcessorCompile"}
 
@@ -117,7 +120,8 @@ function setup()
     os.execute("git clone https://github.com/ocornut/imgui --branch docking lib/imgui-docking")
     --IMPLOT
     os.execute("git clone https://github.com/epezent/implot lib/implot")
-
+    --GLM
+    os.execute("git clone https://github.com/g-truc/glm lib/glm")
     --GLEW
      local glewFileName = "glew-2.2.0"
     local winFileName = string.format("%s-win32",glewFileName)

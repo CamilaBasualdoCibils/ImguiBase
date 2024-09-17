@@ -1,16 +1,6 @@
 #pragma once
 #include <string>
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#ifndef _IMGUI_INC
-#define _IMGUI_INC
-#include "imgui.h"
-#include "backends/imgui_impl_opengl3.h"
-#include "backends/imgui_impl_glfw.h"
-#include "implot.h"
-#endif
+#include "lib_include.h"
 class App
 {
 public:
@@ -25,7 +15,7 @@ public:
         uint32_t GL_version_major = 3,GL_version_minor = 2; //this would be 3.1
     };
 
-private:
+protected:
     AppProperties properties;
     bool shouldShutdown = false;
     GLFWwindow* window = nullptr;
@@ -37,12 +27,14 @@ public:
     void Run();
     /// @brief Commands the app to shutdown when the frame is done rendering
     void Shutdown();
-
+ivec2 getWindowSize();
 private:
     virtual void OnStart() = 0;
     virtual void OnUpdate() = 0;
     virtual void OnRender() = 0;
+    virtual void OnPostRender() {}
     virtual void OnShutdown()= 0;
     void CleanUp();
     static void glfw_error_callback(int error, const char *description);
+    
 };

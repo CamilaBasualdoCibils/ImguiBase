@@ -1,9 +1,30 @@
 #include "App.h"
 #include <iostream>
 #include <exception>
-App::App(const AppProperties &_p):properties(_p)
-{
+void APIENTRY openglDebugCallback(GLenum source, GLenum type, GLuint id,
+                                  GLenum severity, GLsizei length,
+                                  const GLchar* message, const void* userParam) {
+    std::cerr << "OpenGL Debug Message [" << id << "]: " << message << std::endl;
 
+    switch (severity) {
+        case GL_DEBUG_SEVERITY_HIGH:
+            std::cerr << "Severity: HIGH" << std::endl;
+            break;
+        case GL_DEBUG_SEVERITY_MEDIUM:
+            std::cerr << "Severity: MEDIUM" << std::endl;
+            break;
+        case GL_DEBUG_SEVERITY_LOW:
+            std::cerr << "Severity: LOW" << std::endl;
+            break;
+        case GL_DEBUG_SEVERITY_NOTIFICATION:
+            std::cerr << "Severity: NOTIFICATION" << std::endl;
+            break;
+    }
+
+    std::cerr << "------------------------" << std::endl;
+}
+App::App(const AppProperties &_p) : properties(_p)
+{
 }
 
 void App::Run()
@@ -15,7 +36,7 @@ void App::Run()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, properties.GL_version_major);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, properties.GL_version_minor);
     glfwWindowHint(GLFW_OPENGL_PROFILE, properties.compatability_openGL_profile ? GLFW_OPENGL_COMPAT_PROFILE : GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); //required for OSX
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // required for OSX
     glfwWindowHint(GLFW_RESIZABLE, properties.window_resizable);
     glfwSetErrorCallback(glfw_error_callback);
     window = glfwCreateWindow(properties.winSizeX, properties.winSizeY, properties.AppName.c_str(), NULL, NULL);
@@ -24,7 +45,10 @@ void App::Run()
     {
         throw std::runtime_error("GLEW failed to init");
     }
-     const GLubyte *version = glGetString(GL_VERSION);
+     glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // Ensures messages are synchronous
+    glDebugMessageCallback(openglDebugCallback, nullptr);
+    const GLubyte *version = glGetString(GL_VERSION);
     std::cout << "OpenGL version supported: " << version << std::endl;
 
     ImGui::CreateContext();
@@ -33,15 +57,26 @@ void App::Run()
     ImGui::StyleColorsDark();
     ImPlot::CreateContext();
     auto &io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable & properties.imgui_docking_enable;     // Enable Docking
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable  & properties.imgui_viewports_enable;   // Enable Multi-Viewport / Platform Windows
+    vec2 content_scale;
+    glfwGetMonitorContentScale(glfwGetPrimaryMonitor(),&content_scale.x,&content_scale.y);
+    ImGui::GetStyle().ScaleAllSizes(content_scale.x);
+    ImGui::GetIO().FontGlobalScale = content_scale.x;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;                                   // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;                                    // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable * properties.imgui_docking_enable;     // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable * properties.imgui_viewports_enable; // Enable Multi-Viewport / Platform Windows
 
-     OnStart();
-    while (!shouldShutdown && !glfwWindowShouldClose(window)) {
+    OnStart();
+    while (!shouldShutdown && !glfwWindowShouldClose(window))
+    {
         glfwPollEvents();
-        //new imgui frame
+        // new imgui frame
+
+        int display_w, display_h;
+        glfwGetFramebufferSize(window, &display_w, &display_h);
+        glViewport(0, 0, display_w, display_h);
+        glClear(GL_COLOR_BUFFER_BIT);
+
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -52,10 +87,6 @@ void App::Run()
         ImGui::EndFrame();
         ImGui::Render();
 
-        int display_w, display_h;
-        glfwGetFramebufferSize(window, &display_w, &display_h);
-        glViewport(0, 0, display_w, display_h);
-        glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
@@ -64,9 +95,10 @@ void App::Run()
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backup_current_context);
         }
+        OnPostRender();
         glfwSwapBuffers(window);
     }
-OnShutdown();
+    OnShutdown();
     CleanUp();
 }
 
@@ -88,5 +120,12 @@ void App::CleanUp()
 
 void App::glfw_error_callback(int error, const char *description)
 {
-    std::cerr << "GLFW Error " <<error <<": " << description << std::endl; 
+    std::cerr << "GLFW Error " << error << ": " << description << std::endl;
+}
+
+ivec2 App::getWindowSize()
+{
+    ivec2 size;
+    glfwGetFramebufferSize(window, &size.x, &size.y);
+    return size;
 }
