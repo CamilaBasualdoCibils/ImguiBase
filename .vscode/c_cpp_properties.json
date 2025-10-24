@@ -4,10 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${default}",
-                "${workspaceFolder}/lib/imgui-docking",
-                "${workspaceFolder}/lib/implot",
-                "${workspaceFolder}/lib/glfw/include",
-                "${workspaceFolder}/lib/glew/include"
+                "${workspaceFolder}/vcpkg_installed/x64-linux/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

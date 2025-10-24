@@ -1,6 +1,6 @@
 #include "Program.h"
 
-ImguiBase::Program::Program(const decltype(files) &_files, bool is_this_source) : files(_files)
+Program::Program(const decltype(files) &_files, bool is_this_source) : files(_files)
 {
     gl_program = glCreateProgram();
     std::vector<GLuint> shader_modules(_files.size());
@@ -69,7 +69,7 @@ ImguiBase::Program::Program(const decltype(files) &_files, bool is_this_source) 
     std::cout << "Shader Program compiled\n";
 }
 template <>
-void ImguiBase::Program::PushUniform<mat4>(const std::string &name, const mat4 &m)
+void Program::PushUniform<mat4>(const std::string &name, const mat4 &m)
 {
     Use();
     glUniformMatrix4fv(FetchUniformLocation(name), 1, GL_FALSE, &m[0][0]);
@@ -77,14 +77,14 @@ void ImguiBase::Program::PushUniform<mat4>(const std::string &name, const mat4 &
 }
 
 template <>
-void ImguiBase::Program::PushUniform<vec3>(const std::string &name, const vec3 &v)
+void Program::PushUniform<vec3>(const std::string &name, const vec3 &v)
 {
     Use();
     glUniform3fv(FetchUniformLocation(name),1,&v.x);
     Unuse();
 }
 template <>
-void ImguiBase::Program::PushUniform<vec4>(const std::string &name, const vec4 &v)
+void Program::PushUniform<vec4>(const std::string &name, const vec4 &v)
 {
     Use();
     glUniform4fv(FetchUniformLocation(name),1,&v.x);
@@ -92,16 +92,37 @@ void ImguiBase::Program::PushUniform<vec4>(const std::string &name, const vec4 &
 }
 
 template <>
-void ImguiBase::Program::PushUniform<float>(const std::string &name, const float &v)
+void Program::PushUniform<float>(const std::string &name, const float &v)
 {
     Use();
     glUniform1fv(FetchUniformLocation(name),1,&v);
     Unuse();
 }
 template <>
-void ImguiBase::Program::PushUniform<int>(const std::string &name, const int &v)
+void Program::PushUniform<int>(const std::string &name, const int &v)
 {
     Use();
     glUniform1iv(FetchUniformLocation(name),1,&v);
+    Unuse();
+}
+template <>
+void Program::PushUniform<uvec2>(const std::string &name, const uvec2 &v)
+{
+    Use();
+    glUniform2ui(FetchUniformLocation(name),v.x,v.y);
+    Unuse();
+}
+template <>
+void Program::PushUniform<ivec2>(const std::string &name, const ivec2 &v)
+{
+    Use();
+    glUniform2i(FetchUniformLocation(name),v.x,v.y);
+    Unuse();
+}
+template <>
+void Program::PushUniform<bool>(const std::string &name, const bool &v)
+{
+    Use();
+    glUniform1i(FetchUniformLocation(name), static_cast<GLint>(v));
     Unuse();
 }

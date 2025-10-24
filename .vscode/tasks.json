@@ -32,6 +32,24 @@
             },
             "problemMatcher": [],
             "dependsOn" : "Premake"
+        },
+        
+        {
+            "label": "Build release",
+            "type": "shell",
+            "command": "make config=release_x64 -j 12",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "dependsOn" : "Premake"
         }
     ],
     "version": "2.0.0"

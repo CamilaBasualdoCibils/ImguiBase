@@ -8,3 +8,6 @@ imgui.ini
 *.sln
 *.filters
 glew.zip
+.cache
+vcpkg
+vcpkg_installed

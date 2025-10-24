@@ -3,32 +3,31 @@
 #include <exception>
 void APIENTRY openglDebugCallback(GLenum source, GLenum type, GLuint id,
                                   GLenum severity, GLsizei length,
-                                  const GLchar* message, const void* userParam) {
+                                  const GLchar *message, const void *userParam)
+{
     std::cerr << "OpenGL Debug Message [" << id << "]: " << message << std::endl;
 
-    switch (severity) {
-        case GL_DEBUG_SEVERITY_HIGH:
-            std::cerr << "Severity: HIGH" << std::endl;
-            break;
-        case GL_DEBUG_SEVERITY_MEDIUM:
-            std::cerr << "Severity: MEDIUM" << std::endl;
-            break;
-        case GL_DEBUG_SEVERITY_LOW:
-            std::cerr << "Severity: LOW" << std::endl;
-            break;
-        case GL_DEBUG_SEVERITY_NOTIFICATION:
-            std::cerr << "Severity: NOTIFICATION" << std::endl;
-            break;
+    switch (severity)
+    {
+    case GL_DEBUG_SEVERITY_HIGH:
+        std::cerr << "Severity: HIGH" << std::endl;
+        break;
+    case GL_DEBUG_SEVERITY_MEDIUM:
+        std::cerr << "Severity: MEDIUM" << std::endl;
+        break;
+    case GL_DEBUG_SEVERITY_LOW:
+        std::cerr << "Severity: LOW" << std::endl;
+        break;
+    case GL_DEBUG_SEVERITY_NOTIFICATION:
+        std::cerr << "Severity: NOTIFICATION" << std::endl;
+        break;
     }
 
     std::cerr << "------------------------" << std::endl;
 }
 App::App(const AppProperties &_p) : properties(_p)
 {
-}
-
-void App::Run()
-{
+    glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
     if (glfwInit() != GLFW_TRUE)
     {
         throw std::runtime_error("GLEW failed to init");
@@ -45,7 +44,7 @@ void App::Run()
     {
         throw std::runtime_error("GLEW failed to init");
     }
-     glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // Ensures messages are synchronous
     glDebugMessageCallback(openglDebugCallback, nullptr);
     const GLubyte *version = glGetString(GL_VERSION);
@@ -58,13 +57,18 @@ void App::Run()
     ImPlot::CreateContext();
     auto &io = ImGui::GetIO();
     vec2 content_scale;
-    glfwGetMonitorContentScale(glfwGetPrimaryMonitor(),&content_scale.x,&content_scale.y);
+    glfwGetMonitorContentScale(glfwGetPrimaryMonitor(), &content_scale.x, &content_scale.y);
     ImGui::GetStyle().ScaleAllSizes(content_scale.x);
     ImGui::GetIO().FontGlobalScale = content_scale.x;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;                                   // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;                                    // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable * properties.imgui_docking_enable;     // Enable Docking
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable * properties.imgui_viewports_enable; // Enable Multi-Viewport / Platform Windows
+}
+
+void App::Run()
+{
+    auto &io = ImGui::GetIO();
 
     OnStart();
     while (!shouldShutdown && !glfwWindowShouldClose(window))
