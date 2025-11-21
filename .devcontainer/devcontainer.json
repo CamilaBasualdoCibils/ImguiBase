@@ -1,0 +1,59 @@
+{
+  "name": "Ubuntu Dev Container",
+  "image": "ubuntu:24.04",
+  // Run commands after container is created
+  "initializeCommand": "sh -c 'if [ ! -f \"$XAUTHORITY\" ] || [ ! -s \"$XAUTHORITY\" ]; then COOKIE=$(od -vAn -N16 -tx1 /dev/urandom | tr -d \" \\n\"); xauth add :0 . $COOKIE; fi'",
+  "postCreateCommand": "./.devcontainer/setup.sh",
+  // Forward ports if needed
+  "forwardPorts": [
+    8080,
+    3000,
+    5000
+  ],
+  // Bind your workspace into the container
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind",
+    "source=${localEnv:XAUTHORITY},target=/root/.Xauthority,type=bind"
+  ],
+  "runArgs": [
+    "--device=nvidia.com/gpu=all",
+    "--device=/dev/dri",
+    // display for X apps (fallback)
+    "--env=DISPLAY=${localEnv:DISPLAY}",
+    "--volume=/tmp/.X11-unix:/tmp/.X11-unix:rw",
+    // wayland support
+    "--env=WAYLAND_DISPLAY=${localEnv:WAYLAND_DISPLAY}",
+    "--env=XDG_RUNTIME_DIR=/run/user/${localEnv:UID}",
+    "--volume=/run/user/${localEnv:UID}:/run/user/${localEnv:UID}",
+    // required on NixOS to avoid SELinux DAC failures
+    "--security-opt=label=disable"
+  ],
+  "containerEnv": {
+    "NVIDIA_VISIBLE_DEVICES": "all",
+    "NVIDIA_DRIVER_CAPABILITIES": "all"
+  },
+  "remoteUser": "root",
+  // Optional: VSCode features support
+  "features": {
+    "ghcr.io/msclock/features/vcpkg:2": {
+      "vcpkgDirectory": "/opt/vcpkg",
+      "vcpkgRoot": "/opt/vcpkg"
+    },
+    "ghcr.io/schlich/devcontainer-features/starship:0": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        //"ms-vscode.cpptools-extension-pack",
+        "ms-azuretools.vscode-docker",
+        "docker.docker",
+        "PKief.material-icon-theme",
+        "cschlosser.doxdocgen",
+        "mhutchie.git-graph",
+        "cweijan.vscode-redis-client",
+        "dtoplak.vscode-glsllint",
+        "yzhang.markdown-all-in-one"
+      ]
+    }
+  }
+}

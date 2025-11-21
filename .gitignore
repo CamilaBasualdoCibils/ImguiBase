@@ -11,3 +11,4 @@ glew.zip
 .cache
 vcpkg
 vcpkg_installed
+compile_commands.json

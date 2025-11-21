@@ -4,6 +4,8 @@
 #include "../lib_include.h"
 #include <string>
 #include <memory>
+#include <array>
+
 enum PixelFormat
 {
     eR = GL_RED,
@@ -64,7 +66,7 @@ public:
         glTextureParameteri(Handle, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         Unbind();
     }
-    void GetData(void* dest, size_t size)
+    void GetData(void* dest, size_t size) const
     {
         glGetTextureImage(Handle,0,pixel_format,GL_UNSIGNED_BYTE,size,dest);
     }
@@ -82,6 +84,52 @@ public:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
         Unbind();
     };
+
+std::array<uint32_t, 256> GetHistogram() const
+{
+    std::array<uint32_t, 256> histogram{};
+    histogram.fill(0);
+
+    const uvec2 size = GetDimensions();
+    const size_t pixelCount = static_cast<size_t>(size.x) * size.y;
+    const PixelFormat fmt = GetPixelFormat();
+
+    // Allocate buffer for pixel data
+    std::vector<uint8_t> pixels;
+    size_t channels = 0;
+    switch (fmt)
+    {
+        case eR:   channels = 1; break;
+        case eRG:  channels = 2; break;
+        case eRGB: channels = 3; break;
+        case eRGBA:channels = 4; break;
+        default:   return histogram;
+    }
+    pixels.resize(pixelCount * channels);
+
+    // Download texture data from GPU
+    GetData(pixels.data(), pixels.size());
+
+    // Compute histogram from luminance or red channel
+    for (size_t i = 0; i < pixelCount; ++i)
+    {
+        uint8_t value = 0;
+        if (channels == 1)
+        {
+            value = pixels[i];
+        }
+        else
+        {
+            const uint8_t* p = &pixels[i * channels];
+            // convert to luminance (ITU-R BT.709)
+            float lum = 0.2126f * p[0] + 0.7152f * p[1] + 0.0722f * p[2];
+            value = static_cast<uint8_t>(glm::clamp(lum, 0.0f, 255.0f));
+        }
+        histogram[value]++;
+    }
+
+    return histogram;
+}
 
 std::shared_ptr<Texture> BlitToNew(uvec2 newSize, TextureFilter filterMode = Linear) const
 {

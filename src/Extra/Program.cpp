@@ -28,6 +28,7 @@ Program::Program(const decltype(files) &_files, bool is_this_source) : files(_fi
 
         GLuint module = glCreateShader(stage);
         glShaderSource(module, 1, &file_content_str, 0);
+        std::cerr << "Compiling " << file_name << std::endl;
         glCompileShader(module);
         GLint info_log_length = 0;
         glGetShaderiv(module, GL_INFO_LOG_LENGTH, &info_log_length);
@@ -80,14 +81,14 @@ template <>
 void Program::PushUniform<vec3>(const std::string &name, const vec3 &v)
 {
     Use();
-    glUniform3fv(FetchUniformLocation(name),1,&v.x);
+    glUniform3fv(FetchUniformLocation(name), 1, &v.x);
     Unuse();
 }
 template <>
 void Program::PushUniform<vec4>(const std::string &name, const vec4 &v)
 {
     Use();
-    glUniform4fv(FetchUniformLocation(name),1,&v.x);
+    glUniform4fv(FetchUniformLocation(name), 1, &v.x);
     Unuse();
 }
 
@@ -95,28 +96,28 @@ template <>
 void Program::PushUniform<float>(const std::string &name, const float &v)
 {
     Use();
-    glUniform1fv(FetchUniformLocation(name),1,&v);
+    glUniform1fv(FetchUniformLocation(name), 1, &v);
     Unuse();
 }
 template <>
 void Program::PushUniform<int>(const std::string &name, const int &v)
 {
     Use();
-    glUniform1iv(FetchUniformLocation(name),1,&v);
+    glUniform1iv(FetchUniformLocation(name), 1, &v);
     Unuse();
 }
 template <>
 void Program::PushUniform<uvec2>(const std::string &name, const uvec2 &v)
 {
     Use();
-    glUniform2ui(FetchUniformLocation(name),v.x,v.y);
+    glUniform2ui(FetchUniformLocation(name), v.x, v.y);
     Unuse();
 }
 template <>
 void Program::PushUniform<ivec2>(const std::string &name, const ivec2 &v)
 {
     Use();
-    glUniform2i(FetchUniformLocation(name),v.x,v.y);
+    glUniform2i(FetchUniformLocation(name), v.x, v.y);
     Unuse();
 }
 template <>
@@ -124,5 +125,12 @@ void Program::PushUniform<bool>(const std::string &name, const bool &v)
 {
     Use();
     glUniform1i(FetchUniformLocation(name), static_cast<GLint>(v));
+    Unuse();
+}
+template <>
+void Program::PushUniform<uint32>(const std::string &name, const uint32 &v)
+{
+    Use();
+    glUniform1ui(FetchUniformLocation(name), v);
     Unuse();
 }

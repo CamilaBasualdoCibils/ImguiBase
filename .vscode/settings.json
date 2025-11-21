@@ -96,11 +96,16 @@
         "print": "cpp",
         "spanstream": "cpp",
         "stacktrace": "cpp",
-        "syncstream": "cpp"
+        "syncstream": "cpp",
+        "flat_map": "cpp",
+        "flat_set": "cpp",
+        "queue": "cpp",
+        "stack": "cpp"
     },
     "C_Cpp.default.cppStandard": "c++20",
     "C_Cpp.default.includePath": [
         "src"
     ],
-    "C_Cpp.intelliSenseEngine": "default"
+    "C_Cpp.intelliSenseEngine": "default",
+    "nixEnvSelector.nixFile": "${workspaceFolder}/flake.nix"
 }
